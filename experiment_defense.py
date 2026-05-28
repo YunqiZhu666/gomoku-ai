@@ -141,7 +141,7 @@ def plot_results(summary):
     ax.grid(True, alpha=0.3, axis="y")
 
     plt.tight_layout()
-    plt.savefig("gomoku-ai/assets/fig_defense_experiment.png", dpi=150)
+    plt.savefig("assets/fig_defense_experiment.png", dpi=150)
     print(f"\n[OK] 图表已保存: assets/fig_defense_experiment.png")
 
 
