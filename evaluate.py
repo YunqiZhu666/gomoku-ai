@@ -61,12 +61,15 @@ def _analyze_line(board: Board, row: int, col: int, dr: int, dc: int, player: in
     if not stone_pos:
         return patterns, covered
 
-    # 按间距 ≤ 2 分组
+    # 按间距 ≤ 2 分组（间隙不能有对手棋子）
+    opponent = Board.BLACK if player == Board.WHITE else Board.WHITE
     groups = []
     cur = [stone_pos[0]]
     for i in range(1, len(stone_pos)):
-        if stone_pos[i] - stone_pos[i - 1] <= 2:
-            cur.append(stone_pos[i])
+        p1, p2 = stone_pos[i - 1], stone_pos[i]
+        gap_clean = not any(line[j] == opponent for j in range(p1 + 1, p2))
+        if p2 - p1 <= 2 and gap_clean:
+            cur.append(p2)
         else:
             groups.append(cur)
             cur = [stone_pos[i]]

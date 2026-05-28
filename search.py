@@ -16,7 +16,7 @@ sys.setrecursionlimit(10000)
 _SEARCH_START = 0.0
 _SEARCH_DEADLINE = 0.0
 _NODE_COUNT = 0
-_MAX_MOVES = 9  # 每层最多考虑 9 个走法（裁剪宽度）
+_MAX_MOVES = 20  # 每层最多考虑 20 个走法（确保对手杀棋不被截掉）
 
 # ── 转置表 ──
 TRANSPOSITION_TABLE = {}
@@ -138,8 +138,9 @@ def alpha_beta(board: Board, depth: int, alpha: float, beta: float,
         return (evaluate(board, player), None)
 
     # ── 走法排序 + 裁剪 ──
-    scored_moves = [(quick_evaluate(board, player, r, c), (r, c)) for r, c in moves]
-    scored_moves.sort(key=lambda x: x[0], reverse=is_maximizing)
+    # 永远取高分走法排前面，确保杀棋/防守走法不被截掉
+    scored_moves = [(quick_evaluate(board, current, r, c), (r, c)) for r, c in moves]
+    scored_moves.sort(key=lambda x: x[0], reverse=True)
     # 只保留前 _MAX_MOVES 个走法
     sorted_moves = [m for _, m in scored_moves[:_MAX_MOVES]]
 
