@@ -221,10 +221,10 @@ add_textbox(slide, Inches(1.1), Inches(4.6), Inches(5), Inches(0.5),
 # 权重表
 weights = [
     ("连五", "10,000,000", COLOR_HIGHLIGHT),
-    ("活四", "1,000,000", COLOR_ORANGE),
-    ("冲四 / 活三", "100,000", COLOR_ACCENT),
-    ("眠三", "10,000", COLOR_GREEN),
-    ("活二", "1,000", COLOR_GRAY),
+    ("活四", "8,000,000", COLOR_ORANGE),
+    ("冲四 / 活三", "2,500,000", COLOR_ACCENT),
+    ("眠三", "200,000", COLOR_GREEN),
+    ("活二", "5,000", COLOR_GRAY),
 ]
 for i, (name, score, color) in enumerate(weights):
     x = 1.1 + i * 2.3
@@ -282,21 +282,27 @@ for i, (opt, desc) in enumerate(opts):
     add_textbox(slide, Inches(8.9), Inches(2.2 + i * 0.4), Inches(3.5), Inches(0.35),
                 f"✅ {opt}：{desc}", font_size=13, color=COLOR_TEXT)
 
+# Bug修复亮点
+bug_box = add_shape_bg(slide, Inches(0.8), Inches(3.9), Inches(11.7), Inches(0.7), COLOR_PRIMARY)
+add_textbox(slide, Inches(1.1), Inches(3.95), Inches(11.3), Inches(0.55),
+            "🐛 评估函数调试：修复了三个关键 Bug（滑动窗口重复计数、走法排序视角错配、跳连分组对手棋子误判），修复后 AI 在任意搜索深度均能正确封堵活三",
+            font_size=11, color=COLOR_WHITE)
+
 # 下部分：文件结构和关键功能
-add_shape_bg(slide, Inches(0.8), Inches(4.0), Inches(11.7), Inches(3.0), COLOR_WHITE)
-add_textbox(slide, Inches(1.1), Inches(4.1), Inches(5), Inches(0.5),
+add_shape_bg(slide, Inches(0.8), Inches(4.8), Inches(11.7), Inches(2.5), COLOR_WHITE)
+add_textbox(slide, Inches(1.1), Inches(4.9), Inches(5), Inches(0.5),
             "项目文件结构", font_size=20, bold=True, color=COLOR_PRIMARY)
-add_textbox(slide, Inches(1.1), Inches(4.6), Inches(11), Inches(2.0),
+add_textbox(slide, Inches(1.1), Inches(5.4), Inches(11), Inches(1.8),
             "gomoku-ai/\n"
-            "├── board.py         棋盘逻辑（落子 / 胜负 / 走法生成）\n"
-            "├── evaluate.py      棋型识别 + 权重打分\n"
-            "├── search.py        Minimax → Alpha-Beta → 迭代加深\n"
-            "├── ui.py            Pygame 图形对战界面\n"
-            "├── main.py          统一入口 (GUI/CLI/实验)\n"
-            "├── experiment.py    实验对比框架\n"
-            "├── assets/          实验图表\n"
+            "├── board.py              棋盘逻辑（落子 / 胜负 / 走法生成）\n"
+            "├── evaluate.py           棋型识别 + 权重打分\n"
+            "├── search.py             Minimax → Alpha-Beta → 迭代加深\n"
+            "├── ui.py                 Pygame 图形对战界面\n"
+            "├── main.py               统一入口 (GUI/CLI/实验)\n"
+            "├── experiment.py / experiment_defense.py   实验对比框架\n"
+            "├── assets/               实验图表\n"
             "├── 开题报告.md / 实验报告.md / 答辩PPT.md",
-            font_size=13, color=COLOR_TEXT)
+            font_size=12, color=COLOR_TEXT)
 
 # ══════════════════════════════════════════════
 # Slide 6: 实验对比
@@ -354,10 +360,43 @@ for i, (num, desc) in enumerate(kpis):
     add_textbox(slide, Inches(10.0), Inches(y + 0.1), Inches(2.5), Inches(0.4),
                 desc, font_size=13, color=RGBColor(0xCC, 0xDD, 0xFF))
 
-# 底部说明
-add_shape_bg(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(1.5), COLOR_WHITE)
+# 底部：防守权重实验（紧凑版）
+add_shape_bg(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(1.8), COLOR_WHITE)
 add_textbox(slide, Inches(1.1), Inches(5.4), Inches(11), Inches(0.4),
-            "搜索树大小对比", font_size=18, bold=True, color=COLOR_PRIMARY)
+            "防守权重对弈实验：不同防守系数 AI 对战胜率（vs baseline 1.0）", font_size=16, bold=True, color=COLOR_PRIMARY)
+defense_data = [
+    ["防守权重", "0.5", "0.8", "1.0", "1.5", "2.0", "3.0"],
+    ["胜率", "33%", "50%", "50%", "50%", "67%", "83%"],
+]
+for ri, row in enumerate(defense_data):
+    for ci, cell in enumerate(row):
+        x = Inches(1.1) + ci * Inches(1.65)
+        y = Inches(5.95) + ri * Inches(0.5)
+        box = add_shape_bg(slide, x, y, Inches(1.5), Inches(0.45),
+                           COLOR_LIGHT_BLUE if ri == 0 else COLOR_WHITE)
+        fc = COLOR_WHITE if ri == 0 else (COLOR_HIGHLIGHT if ci == 6 else COLOR_TEXT)
+        add_textbox(slide, x + Inches(0.05), y + Inches(0.05), Inches(1.4), Inches(0.35),
+                    cell, font_size=13,
+                    bold=(ri == 0 or ci == 6),
+                    color=fc, alignment=PP_ALIGN.CENTER)
+add_textbox(slide, Inches(1.1), Inches(6.78), Inches(11), Inches(0.3),
+            "→ 防守权重 3.0 胜率最高 (83%)，验证了加强防守能有效提升棋力；权重 1.1 兼顾攻守",
+            font_size=11, color=COLOR_GRAY)
+
+# ══════════════════════════════════════════════
+# Slide 7: 搜索树对比 + 评估函数灵敏度
+# ══════════════════════════════════════════════
+slide = prs.slides.add_slide(prs.slide_layouts[6])
+add_bg(slide)
+add_accent_bar(slide, Inches(0), Inches(0), Inches(0.08), SLIDE_H, COLOR_ACCENT)
+add_textbox(slide, Inches(0.8), Inches(0.4), Inches(6), Inches(0.6),
+            "04  实验对比（续）：搜索树 & 棋型灵敏度", font_size=28, bold=True, color=COLOR_PRIMARY)
+add_accent_bar(slide, Inches(0.8), Inches(1.1), Inches(2), Inches(0.04), COLOR_HIGHLIGHT)
+
+# 左侧：搜索树大小对比
+add_shape_bg(slide, Inches(0.8), Inches(1.5), Inches(6.0), Inches(3.0), COLOR_WHITE)
+add_textbox(slide, Inches(1.1), Inches(1.6), Inches(5.5), Inches(0.4),
+            "搜索树大小对比", font_size=20, bold=True, color=COLOR_PRIMARY)
 tree_data = [
     ["深度 4", "130,321 节点", "400 节点", "326×"],
     ["深度 5", "2,476,099 节点", "900 节点", "2,751×"],
@@ -365,14 +404,56 @@ tree_data = [
 ]
 for ri, row in enumerate(tree_data):
     for ci, cell in enumerate(row):
-        x = Inches(1.1) + ci * Inches(2.8)
-        y = Inches(5.9) + ri * Inches(0.35)
+        x = Inches(1.1) + ci * Inches(1.4)
+        y = Inches(2.2) + ri * Inches(0.5)
         c = COLOR_HIGHLIGHT if ci == 3 else COLOR_TEXT
-        add_textbox(slide, x, y, Inches(2.5), Inches(0.35),
-                    cell, font_size=12, bold=(ci == 3), color=c)
+        add_textbox(slide, x, y, Inches(1.3), Inches(0.4),
+                    cell, font_size=13, bold=(ci == 3), color=c)
+# 表头
+for ci, h in enumerate(["深度", "Minimax", "Alpha-Beta", "缩减"]):
+    add_textbox(slide, Inches(1.1) + ci * Inches(1.4), Inches(2.2), Inches(1.3), Inches(0.3),
+                h, font_size=11, bold=True, color=COLOR_GRAY)
+add_textbox(slide, Inches(1.1), Inches(3.8), Inches(5.5), Inches(0.4),
+            "深度 6 时 Minimax 需 4700 万节点，Alpha-Beta 仅需 1800 节点 → 可多搜 3-4 层",
+            font_size=12, color=COLOR_GRAY)
+
+# 右侧：评估函数灵敏度
+add_shape_bg(slide, Inches(7.2), Inches(1.5), Inches(5.3), Inches(3.0), COLOR_WHITE)
+add_textbox(slide, Inches(7.5), Inches(1.6), Inches(4.8), Inches(0.4),
+            "评估函数棋型灵敏度", font_size=20, bold=True, color=COLOR_PRIMARY)
+sensitivity = [
+    ("空棋盘", "0", "基准"),
+    ("一子", "40", "微弱先手"),
+    ("活二", "1,060", "潜在威胁"),
+    ("活三", "100,090", "威胁大"),
+    ("活四", "1,000,120", "接近必胜"),
+    ("连五", "10,000,150", "必胜"),
+]
+for i, (name, score, meaning) in enumerate(sensitivity):
+    y = Inches(2.2 + i * 0.42)
+    add_textbox(slide, Inches(7.5), y, Inches(1.4), Inches(0.35),
+                name, font_size=13, bold=True, color=COLOR_TEXT)
+    add_textbox(slide, Inches(8.9), y, Inches(1.6), Inches(0.35),
+                score, font_size=12, color=COLOR_ACCENT)
+    add_textbox(slide, Inches(10.5), y, Inches(2.0), Inches(0.35),
+                meaning, font_size=11, color=COLOR_GRAY)
+
+# 底部：AI自对弈
+add_shape_bg(slide, Inches(0.8), Inches(4.8), Inches(11.7), Inches(2.2), COLOR_WHITE)
+add_textbox(slide, Inches(1.1), Inches(4.9), Inches(11), Inches(0.4),
+            "AI vs AI 自对弈 & 综合结论", font_size=20, bold=True, color=COLOR_PRIMARY)
+selfplay = [
+    "▸ 先手（黑）胜率 70%，后手（白）胜率 20%，平局 10%，平均 23.5 手",
+    "▸ Alpha-Beta 剪枝效果显著：深度 ≥ 3 时加速比 30× 以上，相同时间可搜更深 3-4 层",
+    "▸ 防守权重实验：权重 3.0 胜率 83%，验证加强防守有效提升棋力；权重 1.1 兼顾攻守",
+    "▸ 走法排序 + 置换表 + 迭代加深 + 走法裁剪的组合效果远超单一技术",
+]
+for i, txt in enumerate(selfplay):
+    add_textbox(slide, Inches(1.1), Inches(5.5 + i * 0.35), Inches(11), Inches(0.35),
+                txt, font_size=13, color=COLOR_TEXT)
 
 # ══════════════════════════════════════════════
-# Slide 7: Demo + 总结
+# Slide 8: Demo + 总结
 # ══════════════════════════════════════════════
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 add_bg(slide)
@@ -416,10 +497,12 @@ summary_items = [
     "",
     "实验验证：",
     "  ✓ Alpha-Beta 加速比 326×",
+    "  ✓ 防守权重 3.0 胜率 83%",
     "  ✓ 评估函数准确识别棋型",
+    "  ✓ 修复 3 个关键 Bug",
     "",
-    "理解了：博弈树搜索的经典范式、",
-    "算法优化与性能调试的工程实践",
+    "理解了博弈树搜索的经典范式",
+    "与算法优化和调试的工程实践",
 ]
 for i, txt in enumerate(summary_items):
     c = COLOR_WHITE
@@ -427,7 +510,7 @@ for i, txt in enumerate(summary_items):
                 txt, font_size=13, bold=("✓" in txt or "：" in txt), color=c)
 
 # ══════════════════════════════════════════════
-# Slide 8: 谢谢
+# Slide 9: 谢谢
 # ══════════════════════════════════════════════
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 add_bg(slide, COLOR_PRIMARY)
@@ -442,7 +525,7 @@ add_textbox(slide, Inches(1), Inches(4.5), Inches(11), Inches(0.6),
             "Q & A", font_size=28, color=COLOR_WHITE, alignment=PP_ALIGN.CENTER)
 
 # ── 保存 ──
-output_path = "gomoku-ai/答辩PPT.pptx"
+output_path = "答辩PPT.pptx"
 prs.save(output_path)
 print(f"[OK] PPT 已生成: {output_path}")
 print(f"     共 {len(prs.slides)} 页幻灯片")
