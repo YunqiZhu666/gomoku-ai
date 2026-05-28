@@ -105,8 +105,8 @@ def alpha_beta(board: Board, depth: int, alpha: float, beta: float,
     global _NODE_COUNT
     _NODE_COUNT += 1
 
-    # 周期性超时检查（每 1000 节点检查一次）
-    if _NODE_COUNT % 1000 == 0 and _time_up():
+    # 周期性超时检查（每 50 节点检查一次，更精确的时间控制）
+    if _NODE_COUNT % 50 == 0 and _time_up():
         return (0, None)  # 超时信号
 
     opponent = Board.BLACK if player == Board.WHITE else Board.WHITE
@@ -148,6 +148,9 @@ def alpha_beta(board: Board, depth: int, alpha: float, beta: float,
     best_score = -float("inf") if is_maximizing else float("inf")
 
     for move in sorted_moves:
+        # 每走一个走法前检查超时，及时退出
+        if _time_up():
+            return (best_score if best_score != -float("inf") else 0, best_move)
         r, c = move
         board.place(r, c, current)
 
