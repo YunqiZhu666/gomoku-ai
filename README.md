@@ -45,11 +45,25 @@ gomoku-ai/
 ### 环境要求
 
 - Python 3.8+
-- 依赖：`pygame` `numpy` `matplotlib` `python-pptx`
+- 核心算法纯标准库，无需额外依赖
 
 ```bash
-pip install pygame numpy matplotlib python-pptx
+# 仅图形界面对战（最常用）
+pip install pygame
+
+# 运行实验 + 图形界面
+pip install pygame matplotlib numpy
+
+# 全部功能（含 PPT 生成）
+pip install pygame matplotlib numpy python-pptx
 ```
+
+| 使用场景 | 所需依赖 |
+|----------|----------|
+| 🎮 图形界面对战 | `pygame` |
+| 💬 命令行对战 | 无（纯标准库） |
+| 🧪 运行实验脚本 | `matplotlib` `numpy` |
+| 📊 重新生成 PPT | `python-pptx` |
 
 ### 启动图形界面
 
