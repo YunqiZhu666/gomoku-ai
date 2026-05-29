@@ -28,6 +28,7 @@ gomoku-ai/
 ├── search.py               # Minimax → Alpha-Beta → 迭代加深
 ├── ui.py                   # Pygame 图形对战界面
 ├── main.py                 # 统一入口（GUI / CLI / 实验）
+├── unbeatable.py           # 无敌模式（AI 先行天元，深度搜索）
 ├── experiment.py           # 性能对比实验
 ├── experiment_defense.py   # 防守权重对弈实验
 ├── md2pptx.py              # PPT 生成工具
@@ -37,6 +38,19 @@ gomoku-ai/
 ├── 答辩PPT.md / 答辩PPT.pptx
 └── README.md
 ```
+
+---
+
+## 🏆 无敌模式（AI 先行，天元开局）
+
+```bash
+python unbeatable.py
+```
+
+AI 执黑先行，第一步固定天元 (4,4)，每步深度搜索 10 秒。人类执白后手应对。
+
+- 如需更强棋力，编辑 `unbeatable.py` 将 `TIME_LIMIT` 改为 `15.0` 或 `30.0`
+- 基于旧 AI 成熟搜索管线，仅提高搜索时限 → 先行优势 + 更深搜索 → 极高胜率
 
 ---
 
@@ -60,6 +74,7 @@ pip install pygame matplotlib numpy python-pptx
 
 | 使用场景 | 所需依赖 |
 |----------|----------|
+| 🏆 无敌模式 | 无（纯标准库） |
 | 🎮 图形界面对战 | `pygame` |
 | 💬 命令行对战 | 无（纯标准库） |
 | 🧪 运行实验脚本 | `matplotlib` `numpy` |
